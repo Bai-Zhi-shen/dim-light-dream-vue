@@ -3,15 +3,19 @@ import Menu from '@/views/Menu.vue'
 </script>
 
 <template>
-  <Menu></Menu>
-
-  <div>
-    <router-link to="/home?key=Home">Go to Home</router-link>
-    <router-link to="/card">Go to Card</router-link>
-    <router-link to="/dark">Go to Dark</router-link>
-    <router-view></router-view>
+  <div class="common-layout">
+    <el-container>
+      <el-header style="padding: 0;">
+        <Menu></Menu>
+      </el-header>
+      <el-main style="padding: 0;">
+        <router-view></router-view>
+      </el-main>
+      <el-footer style="padding: 0;">
+        <div style="text-align: center;"><span>备案号：xxxxxx</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>@2023微光筑梦</span></div>
+      </el-footer>
+    </el-container>
   </div>
-
 </template>
 
 <style scoped>
