@@ -1,20 +1,19 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-    
     <div class="masthead">
         <div class="masthead-mask">
             <h1 class="tagline">加入我们, 成为志愿者!</h1>
         </div>
     </div>
-    <div class="introduce">
+    <div class="introduce" style="overflow: hidden;">
         展示...
     </div>
 </template>
 
-<style>
+<script setup lang="ts">
+
+</script>
+
+<style scoped>
 .tagline {
     text-align: center;
     color: #fff;

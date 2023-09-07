@@ -1,8 +1,7 @@
-<script setup lang="ts">
-import Login from '@/components/Login.vue'
-</script>
-
 <template>
-    <Login></Login>
-    
+    个人信息
 </template>
+
+<script setup lang="ts">
+
+</script>

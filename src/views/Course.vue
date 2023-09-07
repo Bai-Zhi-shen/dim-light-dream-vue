@@ -1,77 +1,127 @@
-<script setup lang="ts">
-import { reactive } from 'vue'
-
-// do not use same name with ref
-const form = reactive({
-  name: '',
-  region: '',
-  date1: '',
-  date2: '',
-  delivery: false,
-  type: [],
-  resource: '',
-  desc: '',
-})
-
-const onSubmit = () => {
-  console.log('submit!')
-}
-</script>
-
 <template>
+
+  <el-row justify="center" style="margin: 2%;">
+    <el-transfer v-model="value" filterable :filter-method="filterMethod" filter-placeholder="搜索"
+      :titles="['志愿者名单', '选择']" :data="data" />
+  </el-row>
+
+  <el-row justify="center" style="margin: 2%;">
+    <el-transfer v-model="value" filterable :filter-method="filterMethod" filter-placeholder="搜索" :titles="['学生名单', '选择']"
+      :data="data" />
+  </el-row>
+
   <el-row justify="center">
-    <el-col :span="16">
+    <el-col :span="10">
       <el-form :model="form" label-width="120px">
-        <el-form-item label="Activity name">
-          <el-input v-model="form.name" />
+
+        <el-form-item label="科目">
+          <el-checkbox-group v-model="form.subject">
+            <el-checkbox label="语文" name="type" />
+            <el-checkbox label="数学" name="type" />
+            <el-checkbox label="英语" name="type" />
+            <el-checkbox label="其他" name="type" />
+          </el-checkbox-group>
         </el-form-item>
-        <el-form-item label="Activity zone">
-          <el-select v-model="form.region" placeholder="please select your zone">
-            <el-option label="Zone one" value="shanghai" />
-            <el-option label="Zone two" value="beijing" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Activity time">
+
+        <el-form-item label="开始时间">
           <el-col :span="11">
-            <el-date-picker v-model="form.date1" type="date" placeholder="Pick a date" style="width: 100%" />
+            <el-date-picker v-model="form.startDate" type="date" placeholder="选择一个日期" style="width: 100%" />
           </el-col>
           <el-col :span="2" class="text-center">
             <span class="text-gray-500">-</span>
           </el-col>
           <el-col :span="11">
-            <el-time-picker v-model="form.date2" placeholder="Pick a time" style="width: 100%" />
+            <el-time-picker v-model="form.startTime" placeholder="选择一个时间" style="width: 100%" />
           </el-col>
         </el-form-item>
-        <el-form-item label="Instant delivery">
-          <el-switch v-model="form.delivery" />
+
+        <el-form-item label="结束时间">
+          <el-col :span="11">
+            <el-date-picker v-model="form.endDate" type="date" placeholder="选择一个日期" style="width: 100%" />
+          </el-col>
+          <el-col :span="2" class="text-center">
+            <span class="text-gray-500">-</span>
+          </el-col>
+          <el-col :span="11">
+            <el-time-picker v-model="form.endTime" placeholder="选择一个时间" style="width: 100%" />
+          </el-col>
         </el-form-item>
-        <el-form-item label="Activity type">
-          <el-checkbox-group v-model="form.type">
-            <el-checkbox label="Online activities" name="type" />
-            <el-checkbox label="Promotion activities" name="type" />
-            <el-checkbox label="Offline activities" name="type" />
-            <el-checkbox label="Simple brand exposure" name="type" />
-          </el-checkbox-group>
+
+        <el-form-item label="是否线上">
+          <el-switch v-model="form.online" />
         </el-form-item>
-        <el-form-item label="Resources">
-          <el-radio-group v-model="form.resource">
-            <el-radio label="Sponsor" />
-            <el-radio label="Venue" />
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="Activity form">
+
+        <el-form-item label="备注">
           <el-input v-model="form.desc" type="textarea" />
         </el-form-item>
+
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">Create</el-button>
+          <el-button type="primary" @click="onSubmit">创建课程</el-button>
           <el-button>Cancel</el-button>
         </el-form-item>
+
       </el-form>
     </el-col>
   </el-row>
 </template>
   
-<style>
+<script setup lang="ts">
+import { reactive } from 'vue'
+import { ref } from 'vue'
+
+// do not use same name with ref
+const form = reactive({
+  subject: [],
+  startDate: '',
+  startTime: '',
+  endDate: '',
+  endTime: '',
+  online: false,
+  desc: '',
+})
+
+interface Option {
+  key: number
+  label: string
+  initial: string
+}
+
+const generateData = () => {
+  const data: Option[] = []
+  const states = [
+    '丁敏',
+    '余涛',
+    '阎秀兰',
+    '梁艳',
+    '黄霞',
+    '毛磊',
+    '刘娜 ',
+  ]
+  const initials = ['CA', 'IL', 'MD', 'TX', 'FL', 'CO', 'CT']
+  states.forEach((city, index) => {
+    data.push({
+      label: city,
+      key: index,
+      initial: initials[index],
+    })
+  })
+  return data
+}
+
+const data = ref<Option[]>(generateData())
+const value = ref([])
+
+const filterMethod = (query:any, item:any) => {
+  return item.initial.toLowerCase().includes(query.toLowerCase())
+}
+
+// 提交表单
+const onSubmit = () => {
+  console.log('submit!')
+}
+</script>
+
+<style scoped>
 .card-header {
   display: flex;
   justify-content: space-between;

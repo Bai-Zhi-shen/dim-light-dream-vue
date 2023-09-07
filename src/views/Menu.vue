@@ -1,35 +1,16 @@
-<script lang="ts" setup>
-import { ref } from 'vue'
-import { useDark, useToggle } from '@vueuse/core'
-
-const activeIndex = ref('1')
-
-const isDark = useDark()
-const toggleDark = useToggle(isDark)
-
-let url = location.href
-let route = (url).substring((url).lastIndexOf("/") + 1)
-if (route == 'home') {
-    activeIndex.value = '1'
-} else if (route == 'course') {
-    activeIndex.value = '2'
-} else if (route == 'my') {
-    activeIndex.value = '3'
-}
-</script>
-
 <template>
     <div style="border-bottom: solid 1px var(--el-menu-border-color); width: 100%;">
         <div style="width: 80%; margin:0 auto;">
             <el-menu :default-active="activeIndex" :ellipsis="false" class="el-menu-demo" mode="horizontal"
                 style="border-bottom:0px;">
+
                 <el-menu-item index="">
                     Logo
                 </el-menu-item>
 
                 <div class="flex-grow" />
-
                 <div class="flex-grow" />
+
                 <router-link to="/home">
                     <el-menu-item index="1">
                         首页
@@ -48,12 +29,42 @@ if (route == 'home') {
                 <el-button @click="toggleDark()" style="margin-left: 20px;">
                     <span class="ml-2">{{ isDark ? '暗黑' : '明亮' }}</span>
                 </el-button>
+                <el-button @click="showLoginModal()" style="margin-left: 20px;">
+                    <span class="ml-2">登录</span>
+                </el-button>
             </el-menu>
         </div>
     </div>
 </template>
 
-<style>
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useDark, useToggle } from '@vueuse/core'
+
+const activeIndex = ref('1')
+
+const isDark = useDark()
+const toggleDark = useToggle(isDark)
+
+// 初始化的时候，根据路由判断当前激活的菜单
+let url = location.href
+let route = (url).substring((url).lastIndexOf("/") + 1)
+if (route == 'home') {
+    activeIndex.value = '1'
+} else if (route == 'course') {
+    activeIndex.value = '2'
+} else if (route == 'my') {
+    activeIndex.value = '3'
+}
+
+// 显示登录 传父组件
+const emit = defineEmits(['changLoginVisible'])
+const showLoginModal = () => {
+    emit('changLoginVisible', true)
+}
+</script>
+
+<style scoped>
 .router-link-active {
     text-decoration: none;
     color: orange;
