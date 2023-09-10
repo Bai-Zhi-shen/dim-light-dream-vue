@@ -31,19 +31,21 @@
                 <el-form-item>
                     <el-input v-model="registerForm.userName" placeholder="用户名" />
                 </el-form-item>
-                <div class="mb-2 flex items-center text-sm">
-                    <el-radio-group v-model="registerForm.sex" class="ml-4">
-                        <el-radio label="0" size="large">隐藏</el-radio>
-                        <el-radio label="1" size="large">男</el-radio>
-                        <el-radio label="2" size="large">女</el-radio>
+
+                <el-form-item label="性别">
+                    <el-radio-group v-model="registerForm.sex">
+                        <el-radio label="0">隐藏</el-radio>
+                        <el-radio label="1">男</el-radio>
+                        <el-radio label="2">女</el-radio>
                     </el-radio-group>
-                </div>
-                <div class="mb-2 flex items-center text-sm">
-                    <el-radio-group v-model="registerForm.userTypeId" class="ml-4">
-                        <el-radio label="1" size="large">志愿者</el-radio>
-                        <el-radio label="2" size="large">学生</el-radio>
+                </el-form-item>
+                <el-form-item label="身份">
+                    <el-radio-group v-model="registerForm.userTypeId">
+                        <el-radio label="1">志愿者</el-radio>
+                        <el-radio label="2">学生</el-radio>
                     </el-radio-group>
-                </div>
+                </el-form-item>
+                
                 <el-form-item>
                     <el-button type="primary" @click="register">注册</el-button>
                     <el-button>清空</el-button>
@@ -149,7 +151,7 @@ const refreshingLoginStatus = () => {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 1;
+    z-index: 100;
     /* 设置 z-index 值，确保模态窗口位于所有其他元素之上 */
     display: flex;
     justify-content: center;

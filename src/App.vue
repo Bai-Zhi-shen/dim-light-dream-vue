@@ -1,19 +1,22 @@
 <template>
-  <el-container>
-    <el-header class="header">
-      <Menu @changLoginVisible="changLoginVisible" :userName="userName"></Menu>
-    </el-header>
-    <el-main class="main">
-      <router-view></router-view>
-    </el-main>
-    <el-footer class="footer">
-      <div style="text-align: center; position:relative;">
-        <span>备案号:
-          xxxxxx</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>@2023微光筑梦</span>
-      </div>
-    </el-footer>
-  </el-container>
-  <Login v-if="isLoginVisible" @changLoginVisible="changLoginVisible" @refreshingLoginStatus="refreshingLoginStatus"></Login>
+  <div class="header">
+    <Menu @changLoginVisible="changLoginVisible" :user="user" ></Menu>
+  </div>
+
+  <div class="main">
+    <router-view :user="user" style="min-height:calc(100vh - 200px);"></router-view>
+
+    <el-row style="height: 100px;">
+      <el-col :span="6" :offset="6" style="display: flex;">
+        <text style="margin: auto 0;">© 微光筑梦 2023. 版权所有.</text>
+      </el-col>
+      <el-col :span="6" :offset="3" style="display: flex;">
+        <text style="margin: auto 0;">联系方式: 2496973903@qq.com</text>
+      </el-col>
+    </el-row>
+  </div>
+  <Login v-if="isLoginVisible" @changLoginVisible="changLoginVisible" @refreshingLoginStatus="refreshingLoginStatus">
+  </Login>
 </template>
 
 <script setup lang="ts">
@@ -22,8 +25,9 @@ import Login from '@/components/Login.vue'
 import { ref } from 'vue'
 import axios from 'axios'
 
+
 const isLoginVisible = ref(false)
-const userName = ref('')
+const user = ref('')
 
 const changLoginVisible = (on_off: boolean) => {
   isLoginVisible.value = on_off
@@ -44,7 +48,7 @@ const login = () => {
       .then(res => {                    //请求成功后执行函数
         if (res.data.code === 1) {
           //请求成功之后给用户名赋值
-          userName.value = res.data.data.userName
+          user.value = res.data.data
         } else {
           console.log("登录失败")
         }
@@ -60,33 +64,16 @@ login()
 
 <style scoped>
 .header {
-  height: 60px;
-  padding: 0;
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 10;
 }
 
 .main {
-  padding: 0;
-  position: absolute;
-  left: 0;
   top: 60px;
-  right: 0;
-  bottom: 60px;
+  height: calc(100vh - 57px);
   overflow-y: auto;
   overflow-x: hidden;
-}
-
-.footer {
-  padding: 0;
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 60px;
-  border-top: solid 1px var(--el-menu-border-color);
 }
 
 .logo {

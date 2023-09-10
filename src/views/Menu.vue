@@ -1,54 +1,54 @@
 <template>
-    <div style="border-bottom: solid 1px var(--el-menu-border-color); width: 100%;">
-        <div style="width: 80%; margin:0 auto;">
-            <el-menu :default-active="activeIndex" :ellipsis="false" class="el-menu-demo" mode="horizontal"
-                style="border-bottom:0px;">
+    <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal">
 
-                <el-menu-item index="">
-                    Logo
-                </el-menu-item>
+        <el-col :span="4"></el-col>
 
-                <div class="flex-grow" />
-                <div class="flex-grow" />
-
-                <router-link to="/home">
-                    <el-menu-item index="1">
-                        首页
-                    </el-menu-item>
-                </router-link>
-                <router-link to="/course">
-                    <el-menu-item index="2">
-                        申请课程
-                    </el-menu-item>
-                </router-link>
-                <router-link to="/my">
-                    <el-menu-item index="3">
-                        个人中心
-                    </el-menu-item>
-                </router-link>
-                <el-button @click="toggleDark()" style="margin-left: 20px;">
-                    <span class="ml-2">{{ isDark ? '暗黑' : '明亮' }}</span>
-                </el-button>
-
-                <div v-if="!userName" style="display: flex;width: 250px;margin-left: 20px;">
-                    <el-button @click="showLoginModal()">
-                        <span class="ml-2">登录</span>
-                    </el-button>
-                </div>
-                <div v-if="userName" style="display: flex;width: 250px;margin-left: 20px;">
-                    <span style="display: flex;align-items: center;">欢迎您，{{ userName }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                    <el-button @click="exitLogin()">
-                        <span class="ml-2">退出登录</span>
-                    </el-button>
-                </div>
-            </el-menu>
+        <div index="">
+            Logo
         </div>
-    </div>
+
+        <el-col :span="8"></el-col>
+
+        <router-link to="/home">
+            <el-menu-item index="1">
+                首页
+            </el-menu-item>
+        </router-link>
+        <router-link to="/course">
+            <el-menu-item index="2">
+                申请课程
+            </el-menu-item>
+        </router-link>
+        <router-link to="/my">
+            <el-menu-item index="3">
+                个人中心
+            </el-menu-item>
+        </router-link>
+
+        <div style="margin: 0 10px;">
+            <el-button @click="toggleDark()" :icon="Sunny" circle v-if="!isDark" />
+            <el-button @click="toggleDark()" :icon="Moon" circle v-if="isDark" />
+        </div>
+        <el-col :span="4">
+            <div v-if="!user" style="width: 200px;margin-left: 20px;">
+                <el-button @click="showLoginModal()">
+                    <span class="ml-2">登录</span>
+                </el-button>
+            </div>
+            <div v-if="user" style="width: 200px;margin-left: 20px;">
+                <el-text class="mx-1">欢迎您，{{ user.userName }}&nbsp;&nbsp;&nbsp;&nbsp;</el-text>
+                <el-button @click="exitLogin()">
+                    <span class="ml-2">退出登录</span>
+                </el-button>
+            </div>
+        </el-col>
+    </el-menu>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useDark, useToggle } from '@vueuse/core'
+import { Sunny, Moon } from '@element-plus/icons-vue'
 
 const activeIndex = ref('1')
 
@@ -72,9 +72,9 @@ const showLoginModal = () => {
     emit('changLoginVisible', true)
 }
 
-const props = defineProps({
-    userName: String
-})
+defineProps<{
+    user?: any
+}>()
 
 const exitLogin = () => {
     localStorage.removeItem('token')

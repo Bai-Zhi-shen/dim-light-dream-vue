@@ -1,19 +1,49 @@
 <template>
-
-  <el-row justify="center" style="margin: 2%;">
-    <el-transfer v-model="value" filterable :filter-method="filterMethod" filter-placeholder="搜索"
-      :titles="['志愿者名单', '选择']" :data="data" />
-  </el-row>
-
-  <el-row justify="center" style="margin: 2%;">
-    <el-transfer v-model="value" filterable :filter-method="filterMethod" filter-placeholder="搜索" :titles="['学生名单', '选择']"
-      :data="data" />
-  </el-row>
-
   <el-row justify="center">
     <el-col :span="10">
       <el-form :model="form" label-width="120px">
-
+        <br />
+        <el-form-item v-for="(teacher, index) in form.teachers" :key="teacher.id" :label="'老师' + (index + 1)"
+          :prop="'teacher.' + index + '.value'" :rules="{
+            required: true,
+            message: '不能为空',
+            trigger: 'blur',
+          }">
+          <el-row :gutter="20">
+            <el-col :span="20">
+              <el-input v-model="teacher.name" />
+            </el-col>
+            <el-col :span="4">
+              <el-button type="danger" :icon="Delete" circle @click.prevent="removeTeacher(teacher)"></el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="4"></el-col>
+          <el-button type="primary" @click="addTeacher">添加老师</el-button>
+        </el-row>
+        <br />
+        <el-form-item v-for="(student, index) in form.students" :key="student.id" :label="'学生' + (index + 1)"
+          :prop="'student.' + index + '.value'" :rules="{
+            required: true,
+            message: '不能为空',
+            trigger: 'blur',
+          }">
+          <el-row :gutter="20">
+            <el-col :span="20">
+              <el-input v-model="student.name" />
+            </el-col>
+            <el-col :span="4">
+              <el-button type="danger" :icon="Delete" circle @click.prevent="removeStudent(student)"></el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+        <el-row :gutter="20">
+          <el-col :span="4">
+          </el-col>
+          <el-button type="primary" @click="addStudent">添加学生</el-button>
+        </el-row>
+        <br />
         <el-form-item label="科目">
           <el-checkbox-group v-model="form.subject">
             <el-checkbox label="语文" name="type" />
@@ -67,10 +97,22 @@
   
 <script setup lang="ts">
 import { reactive } from 'vue'
-import { ref } from 'vue'
+import { Delete } from '@element-plus/icons-vue'
 
 // do not use same name with ref
-const form = reactive({
+const form = reactive<{
+  teachers: TeacherItem[]
+  students: StudentItem[]
+  subject: string[]
+  startDate: string
+  startTime: string
+  endDate: string
+  endTime: string
+  online: boolean
+  desc: string
+}>({
+  teachers: [],
+  students: [],
   subject: [],
   startDate: '',
   startTime: '',
@@ -80,39 +122,38 @@ const form = reactive({
   desc: '',
 })
 
-interface Option {
-  key: number
-  label: string
-  initial: string
+interface TeacherItem {
+  id: number
+  name: string
 }
-
-const generateData = () => {
-  const data: Option[] = []
-  const states = [
-    '丁敏',
-    '余涛',
-    '阎秀兰',
-    '梁艳',
-    '黄霞',
-    '毛磊',
-    '刘娜 ',
-  ]
-  const initials = ['CA', 'IL', 'MD', 'TX', 'FL', 'CO', 'CT']
-  states.forEach((city, index) => {
-    data.push({
-      label: city,
-      key: index,
-      initial: initials[index],
-    })
+const removeTeacher = (item: TeacherItem) => {
+  const index = form.teachers.indexOf(item)
+  if (index !== -1) {
+    form.teachers.splice(index, 1)
+  }
+}
+const addTeacher = () => {
+  form.teachers.push({
+    id: Date.now(),
+    name: '',
   })
-  return data
 }
 
-const data = ref<Option[]>(generateData())
-const value = ref([])
-
-const filterMethod = (query:any, item:any) => {
-  return item.initial.toLowerCase().includes(query.toLowerCase())
+interface StudentItem {
+  id: number
+  name: string
+}
+const removeStudent = (item: TeacherItem) => {
+  const index = form.students.indexOf(item)
+  if (index !== -1) {
+    form.students.splice(index, 1)
+  }
+}
+const addStudent = () => {
+  form.students.push({
+    id: Date.now(),
+    name: '',
+  })
 }
 
 // 提交表单
