@@ -29,9 +29,18 @@
                 <el-button @click="toggleDark()" style="margin-left: 20px;">
                     <span class="ml-2">{{ isDark ? '暗黑' : '明亮' }}</span>
                 </el-button>
-                <el-button @click="showLoginModal()" style="margin-left: 20px;">
-                    <span class="ml-2">登录</span>
-                </el-button>
+
+                <div v-if="!userName" style="display: flex;width: 250px;margin-left: 20px;">
+                    <el-button @click="showLoginModal()">
+                        <span class="ml-2">登录</span>
+                    </el-button>
+                </div>
+                <div v-if="userName" style="display: flex;width: 250px;margin-left: 20px;">
+                    <span style="display: flex;align-items: center;">欢迎您，{{ userName }}&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <el-button @click="exitLogin()">
+                        <span class="ml-2">退出登录</span>
+                    </el-button>
+                </div>
             </el-menu>
         </div>
     </div>
@@ -61,6 +70,15 @@ if (route == 'home') {
 const emit = defineEmits(['changLoginVisible'])
 const showLoginModal = () => {
     emit('changLoginVisible', true)
+}
+
+const props = defineProps({
+    userName: String
+})
+
+const exitLogin = () => {
+    localStorage.removeItem('token')
+    location.reload()
 }
 </script>
 

@@ -3,20 +3,51 @@
         <el-card class="box-card" style="width: 500px;">
             <template #header>
                 <div class="card-header" style="display: flex;">
-                    <span>登录</span>
+                    <span v-if="!isRegisterForm">登录</span> <span v-else>注册</span>
                     <el-button @click="hideLoginModal" text style="margin-left: auto">关闭</el-button>
                 </div>
             </template>
-            <el-form :model="form">
+            <el-form :model="loginForm" v-if="!isRegisterForm">
                 <el-form-item>
-                    <el-input v-model="form.username" placeholder="请输入用户名" />
+                    <el-input v-model="loginForm.phone" placeholder="请输入手机号" />
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="form.password" placeholder="请输入密码" />
+                    <el-input v-model="loginForm.password" placeholder="请输入密码" show-password />
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" @click="submitForm">登录</el-button>
+                    <el-button type="primary" @click="login">登录</el-button>
                     <el-button>清空</el-button>
+                    <el-button type="primary" @click="isRegisterForm = !isRegisterForm" style="margin-left: auto">前往注册</el-button>
+                </el-form-item>
+            </el-form>
+
+            <el-form :model="registerForm" v-if="isRegisterForm">
+                <el-form-item>
+                    <el-input v-model="registerForm.phone" placeholder="未来登录用的手机号" />
+                </el-form-item>
+                <el-form-item>
+                    <el-input v-model="registerForm.password" placeholder="未来登录用的密码" show-password />
+                </el-form-item>
+                <el-form-item>
+                    <el-input v-model="registerForm.userName" placeholder="用户名" />
+                </el-form-item>
+                <div class="mb-2 flex items-center text-sm">
+                    <el-radio-group v-model="registerForm.sex" class="ml-4">
+                        <el-radio label="0" size="large">隐藏</el-radio>
+                        <el-radio label="1" size="large">男</el-radio>
+                        <el-radio label="2" size="large">女</el-radio>
+                    </el-radio-group>
+                </div>
+                <div class="mb-2 flex items-center text-sm">
+                    <el-radio-group v-model="registerForm.userTypeId" class="ml-4">
+                        <el-radio label="1" size="large">志愿者</el-radio>
+                        <el-radio label="2" size="large">学生</el-radio>
+                    </el-radio-group>
+                </div>
+                <el-form-item>
+                    <el-button type="primary" @click="register">注册</el-button>
+                    <el-button>清空</el-button>
+                    <el-button type="primary" @click="isRegisterForm = !isRegisterForm" style="margin-left: auto">前往登录</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -25,21 +56,89 @@
 
 <script setup lang="ts">
 import { reactive } from 'vue'
+import { ref } from 'vue'
+import axios from 'axios'
+import { ElMessage } from 'element-plus'
+const back_url = import.meta.env.VITE_back_url
+
+const isRegisterForm = ref(false)
 
 // do not use same name with ref
-const form = reactive({
-    username: '',
+const loginForm = reactive({
+    phone: '',
     password: ''
 })
 
-const submitForm = () => {
+const registerForm = reactive({
+    phone: '',
+    password: '',
+    userName: '',
+    sex: '0',
+    userTypeId: '1'
+})
+
+const login = () => {
     // 处理登录表单提交逻辑  
+    axios.post(back_url + '/login', {
+        phone: loginForm.phone,
+        password: loginForm.password
+    })
+        .then(function (response: any) {
+            if (response.data.code === 1) {
+                localStorage.setItem("token",response.data.data)
+                ElMessage({
+                    message: '登录成功',
+                    type: 'success',
+                })
+                hideLoginModal()
+                refreshingLoginStatus()
+            } else{
+                ElMessage({
+                    message: response.data.msg,
+                    type: 'warning',
+                })
+            }
+        })
+        .catch(function (error: any) {
+            console.log(error)
+        })
+}
+
+const register = () => {
+    // 处理注册表单提交逻辑
+    axios.post(back_url + '/login/register', {
+        phone: registerForm.phone,
+        password: registerForm.password,
+        userName: registerForm.userName,
+        sex: registerForm.sex,
+        userTypeId: registerForm.userTypeId
+    })
+        .then(function (response: any) {
+            if (response.data.code === 1) {
+                ElMessage({
+                    message: '注册成功',
+                    type: 'success',
+                })
+                isRegisterForm.value = !isRegisterForm
+            } else{
+                ElMessage({
+                    message: response.data.msg,
+                    type: 'warning',
+                })
+            }
+        })
+        .catch(function (error: any) {
+            console.log(error)
+        })
 }
 
 // 隐藏登录 传父组件
-const emit = defineEmits(['changLoginVisible'])
+const emit = defineEmits(['changLoginVisible','refreshingLoginStatus'])
 const hideLoginModal = () => {
     emit('changLoginVisible', false)
+}
+const refreshingLoginStatus = () => {
+    emit('refreshingLoginStatus')
 }
 </script>
 
@@ -50,7 +149,7 @@ const hideLoginModal = () => {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 9999;
+    z-index: 1;
     /* 设置 z-index 值，确保模态窗口位于所有其他元素之上 */
     display: flex;
     justify-content: center;
