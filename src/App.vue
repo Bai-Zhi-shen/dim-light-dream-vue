@@ -24,6 +24,8 @@ import Menu from '@/views/Menu.vue'
 import Login from '@/components/Login.vue'
 import { ref } from 'vue'
 import axios from 'axios'
+//axios全局配置
+axios.defaults.headers['token'] = window.localStorage.getItem("token")
 
 
 const isLoginVisible = ref(false)
@@ -38,22 +40,19 @@ const refreshingLoginStatus = () => {
 }
 
 const login = () => {
-  //axios全局配置
-  axios.defaults.headers['token'] = window.localStorage.getItem("token")
   if (localStorage.getItem('token')) {
     axios({
       method: 'get',
       url: import.meta.env.VITE_back_url + '/user'
     })
-      .then(res => {                    //请求成功后执行函数
+      .then(res => {
         if (res.data.code === 1) {
-          //请求成功之后给用户名赋值
           user.value = res.data.data
         } else {
-          console.log("登录失败")
+          user.value = ''
         }
       })
-      .catch(err => {                   //请求错误后执行函数
+      .catch(err => {
         console.log("请求错误:" + err)
       })
   }

@@ -17,7 +17,8 @@
                 <el-form-item>
                     <el-button type="primary" @click="login">登录</el-button>
                     <el-button>清空</el-button>
-                    <el-button type="primary" @click="isRegisterForm = !isRegisterForm" style="margin-left: auto">前往注册</el-button>
+                    <el-button type="primary" @click="isRegisterForm = !isRegisterForm"
+                        style="margin-left: auto">前往注册</el-button>
                 </el-form-item>
             </el-form>
 
@@ -45,11 +46,11 @@
                         <el-radio label="2">学生</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                
                 <el-form-item>
                     <el-button type="primary" @click="register">注册</el-button>
                     <el-button>清空</el-button>
-                    <el-button type="primary" @click="isRegisterForm = !isRegisterForm" style="margin-left: auto">前往登录</el-button>
+                    <el-button type="primary" @click="isRegisterForm = !isRegisterForm"
+                        style="margin-left: auto">前往登录</el-button>
                 </el-form-item>
             </el-form>
         </el-card>
@@ -80,34 +81,26 @@ const registerForm = reactive({
 })
 
 const login = () => {
-    // 处理登录表单提交逻辑  
     axios.post(back_url + '/login', {
         phone: loginForm.phone,
         password: loginForm.password
     })
-        .then(function (response: any) {
-            if (response.data.code === 1) {
-                localStorage.setItem("token",response.data.data)
-                ElMessage({
-                    message: '登录成功',
-                    type: 'success',
-                })
+        .then(res => {
+            if (res.data.code === 1) {
+                localStorage.setItem("token", res.data.data)
+                ElMessage.success('登录成功')
                 hideLoginModal()
                 refreshingLoginStatus()
-            } else{
-                ElMessage({
-                    message: response.data.msg,
-                    type: 'warning',
-                })
+            } else {
+                ElMessage.warning(res.data.msg)
             }
         })
-        .catch(function (error: any) {
-            console.log(error)
+        .catch(err => {
+            ElMessage.error('连接服务器失败：' + err)
         })
 }
 
 const register = () => {
-    // 处理注册表单提交逻辑
     axios.post(back_url + '/login/register', {
         phone: registerForm.phone,
         password: registerForm.password,
@@ -115,27 +108,21 @@ const register = () => {
         sex: registerForm.sex,
         userTypeId: registerForm.userTypeId
     })
-        .then(function (response: any) {
-            if (response.data.code === 1) {
-                ElMessage({
-                    message: '注册成功',
-                    type: 'success',
-                })
+        .then(res => {
+            if (res.data.code === 1) {
+                ElMessage.success('注册成功')
                 isRegisterForm.value = !isRegisterForm
-            } else{
-                ElMessage({
-                    message: response.data.msg,
-                    type: 'warning',
-                })
+            } else {
+                ElMessage.warning(res.data.msg)
             }
         })
-        .catch(function (error: any) {
-            console.log(error)
+        .catch(err => {
+            ElMessage.error('连接服务器失败：' + err)
         })
 }
 
 // 隐藏登录 传父组件
-const emit = defineEmits(['changLoginVisible','refreshingLoginStatus'])
+const emit = defineEmits(['changLoginVisible', 'refreshingLoginStatus'])
 const hideLoginModal = () => {
     emit('changLoginVisible', false)
 }
