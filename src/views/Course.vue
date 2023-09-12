@@ -1,46 +1,31 @@
 <template>
   <el-row justify="center">
-    <el-col :span="10">
-      <el-form :model="form" label-width="120px">
+    <el-col :xs="23" :sm="16" :md="14" :lg="12" :xl="10">
+      <el-form :model="form" label-width="80px">
         <br />
-        <el-form-item v-for="(teacher, index) in form.teachers" :key="teacher.id" :label="'老师' + (index + 1)"
-          :prop="'teacher.' + index + '.value'" :rules="{
-            required: true,
-            message: '不能为空',
-            trigger: 'blur',
-          }">
-          <el-row :gutter="20">
-            <el-col :span="20">
-              <el-input v-model="teacher.name" />
-            </el-col>
-            <el-col :span="4">
-              <el-button type="danger" :icon="Delete" circle @click.prevent="removeTeacher(teacher)"></el-button>
-            </el-col>
-          </el-row>
+        <el-form-item v-for="(teacher, index) in form.teachers" :key="teacher.key" :label="'老师' + (index + 1)"
+          :prop="'teacher.' + index + '.value'">
+
+          <el-select v-model="teacher.id" class="m-2" placeholder="请选择老师" size="large">
+            <el-option v-for="item in teachers" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+
+          <el-button type="danger" :icon="Delete" circle @click.prevent="removeTeacher(teacher)"></el-button>
         </el-form-item>
-        <el-row :gutter="20">
-          <el-col :span="4"></el-col>
+        <el-row justify="center">
           <el-button type="primary" @click="addTeacher">添加老师</el-button>
         </el-row>
         <br />
-        <el-form-item v-for="(student, index) in form.students" :key="student.id" :label="'学生' + (index + 1)"
-          :prop="'student.' + index + '.value'" :rules="{
-            required: true,
-            message: '不能为空',
-            trigger: 'blur',
-          }">
-          <el-row :gutter="20">
-            <el-col :span="20">
-              <el-input v-model="student.name" />
-            </el-col>
-            <el-col :span="4">
-              <el-button type="danger" :icon="Delete" circle @click.prevent="removeStudent(student)"></el-button>
-            </el-col>
-          </el-row>
+        <el-form-item v-for="(student, index) in form.students" :key="student.key" :label="'学生' + (index + 1)"
+          :prop="'student.' + index + '.value'">
+
+          <el-select v-model="student.id" class="m-2" placeholder="请选择学生" size="large">
+            <el-option v-for="item in students" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+
+          <el-button type="danger" :icon="Delete" circle @click.prevent="removeStudent(student)"></el-button>
         </el-form-item>
-        <el-row :gutter="20">
-          <el-col :span="4">
-          </el-col>
+        <el-row justify="center">
           <el-button type="primary" @click="addStudent">添加学生</el-button>
         </el-row>
         <br />
@@ -82,11 +67,11 @@
         </el-form-item>
 
         <el-form-item label="备注">
-          <el-input v-model="form.desc" type="textarea" />
+          <el-input v-model="form.description" type="textarea" />
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">创建课程</el-button>
+          <el-button type="primary" @click="submitLesson">创建课程</el-button>
           <el-button>Cancel</el-button>
         </el-form-item>
 
@@ -98,18 +83,20 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { Delete } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import axios from 'axios'
 
 // do not use same name with ref
 const form = reactive<{
-  teachers: TeacherItem[]
-  students: StudentItem[]
+  teachers: UniqueItem[]
+  students: UniqueItem[]
   subject: string[]
   startDate: string
   startTime: string
   endDate: string
   endTime: string
   online: boolean
-  desc: string
+  description: string
 }>({
   teachers: [],
   students: [],
@@ -119,14 +106,15 @@ const form = reactive<{
   endDate: '',
   endTime: '',
   online: false,
-  desc: '',
+  description: '',
 })
 
-interface TeacherItem {
-  id: number
-  name: string
+interface UniqueItem {
+  key: number
+  id: string
 }
-const removeTeacher = (item: TeacherItem) => {
+
+const removeTeacher = (item: UniqueItem) => {
   const index = form.teachers.indexOf(item)
   if (index !== -1) {
     form.teachers.splice(index, 1)
@@ -134,16 +122,12 @@ const removeTeacher = (item: TeacherItem) => {
 }
 const addTeacher = () => {
   form.teachers.push({
-    id: Date.now(),
-    name: '',
+    key: Date.now(),
+    id: '',
   })
 }
 
-interface StudentItem {
-  id: number
-  name: string
-}
-const removeStudent = (item: TeacherItem) => {
+const removeStudent = (item: UniqueItem) => {
   const index = form.students.indexOf(item)
   if (index !== -1) {
     form.students.splice(index, 1)
@@ -151,14 +135,45 @@ const removeStudent = (item: TeacherItem) => {
 }
 const addStudent = () => {
   form.students.push({
-    id: Date.now(),
-    name: '',
+    key: Date.now(),
+    id: '',
   })
 }
 
+// 测试数据，未来通过后端获取
+const teachers = [
+  { id: '114', name: '测试老师1' },
+  { id: '514', name: '测试老师2' },
+]
+
+const students = [
+  { id: '1515', name: '测试学生1' },
+  { id: '810', name: '测试学生2' },
+]
+
 // 提交表单
-const onSubmit = () => {
-  console.log('submit!')
+const submitLesson = () => {
+  axios.post('/lesson', {
+    teachers: form.teachers,
+    students: form.students,
+    subject: form.subject,
+    startDate: form.startDate,
+    startTime: form.startTime,
+    endDate: form.endDate,
+    endTime: form.endTime,
+    online: form.online,
+    description: form.description,
+  })
+    .then(res => {
+      if (res.data.code === 1) {
+        ElMessage.success('添加课程成功')
+      } else {
+        ElMessage.warning(res.data.msg)
+      }
+    })
+    .catch(err => {
+      ElMessage.error('连接服务器失败：' + err)
+    })
 }
 </script>
 

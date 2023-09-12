@@ -1,12 +1,12 @@
 <template>
     <div class="masthead">
         <div class="masthead-mask">
-            <h1 class="tagline">加入我们, 成为志愿者!</h1>
+            <p class="tagline">加入我们, 成为志愿者!</p>
         </div>
     </div>
 
     <el-row justify="center" class="text-center" style="margin: 50px 0;">
-        <el-col :span="4">
+        <el-col :span="4" :xs="8">
             <div>
                 <el-icon color="#409EFC" size="100">
                     <CircleCheck />
@@ -15,7 +15,7 @@
                 <p>使用邮箱一键注册!</p>
             </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="4" :xs="8">
             <div>
                 <el-icon color="#409EFC" size="100">
                     <CircleCheck />
@@ -24,7 +24,7 @@
                 <p>注册时一键选择自己想学/想教科目, 随后亦可以随时更改!</p>
             </div>
         </el-col>
-        <el-col :span="4">
+        <el-col :span="4" :xs="8">
             <div>
                 <el-icon color="#409EFC" size="100">
                     <CircleCheck />
@@ -43,13 +43,13 @@
         </el-col>
         <el-col :span="3"></el-col>
         <el-col :span="12">
-            <el-image src="https://wgzm.soai.cc/static/index/assets/img/bg-showcase-1.jpg" fit="cover" />
+            <el-image :src="homeShowCaseImg1" fit="cover" />
         </el-col>
     </el-row>
     <el-row>
 
         <el-col :span="12">
-            <el-image src="https://wgzm.soai.cc/static/index/assets/img/bg-showcase-2.jpg" fit="cover" />
+            <el-image :src="homeShowCaseImg2" fit="cover" />
         </el-col>
         <el-col :span="3"></el-col>
         <el-col :span="6" style="margin: auto;">
@@ -66,13 +66,16 @@
         </el-col>
         <el-col :span="3"></el-col>
         <el-col :span="12">
-            <el-image src="https://wgzm.soai.cc/static/index/assets/img/bg-showcase-3.jpg" fit="cover" />
+            <el-image :src="homeShowCaseImg3" fit="cover" />
         </el-col>
     </el-row>
 </template>
 
 <script setup lang="ts">
 import { CircleCheck } from '@element-plus/icons-vue'
+import homeShowCaseImg1 from '@/assets/images/home-showcase-1.jpg'
+import homeShowCaseImg2 from '@/assets/images/home-showcase-2.jpg'
+import homeShowCaseImg3 from '@/assets/images/home-showcase-3.jpg'
 </script>
 
 <style scoped>
@@ -83,14 +86,14 @@ import { CircleCheck } from '@element-plus/icons-vue'
 .tagline {
     text-align: center;
     color: #fff;
-    font-size: 3rem;
+    font-size: 2rem;
     font-weight: 700;
 }
 
 .masthead {
     width: 100%;
     background-color: #343a40;
-    background: url(https://wgzm.soai.cc/static/index/assets/img/bg-masthead.jpg);
+    background: url("@/assets/images/home-masthead.jpg");
     background-position: center;
     background-size: cover;
 }
@@ -98,8 +101,8 @@ import { CircleCheck } from '@element-plus/icons-vue'
 .masthead-mask {
     height: 100%;
     width: 100%;
-    padding-top: 8rem;
-    padding-bottom: 8rem;
+    padding-top: 6rem;
+    padding-bottom: 6rem;
     background: rgba(28, 55, 94, .3);
 }
 
@@ -107,6 +110,10 @@ import { CircleCheck } from '@element-plus/icons-vue'
     .masthead-mask {
         padding-top: 12rem;
         padding-bottom: 12rem;
+    }
+
+    .tagline {
+        font-size: 3rem;
     }
 }
 

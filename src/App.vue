@@ -40,19 +40,24 @@ const refreshingLoginStatus = () => {
 }
 
 const login = () => {
+  // 判断是否登录
   if (localStorage.getItem('token')) {
+    // 请求用户信息
     axios({
       method: 'get',
       url: import.meta.env.VITE_back_url + '/user'
     })
       .then(res => {
+        // 如果状态码为1，则将用户信息赋值给user
         if (res.data.code === 1) {
           user.value = res.data.data
         } else {
+          // 否则将user赋值为空
           user.value = ''
         }
       })
       .catch(err => {
+        // 打印错误信息
         console.log("请求错误:" + err)
       })
   }

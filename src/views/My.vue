@@ -1,9 +1,9 @@
 <template>
     <el-row justify="center">
-        <el-col :span="10">
-            <el-form :model="user" label-width="120px">
+        <el-col :xs="23" :sm="16" :md="14" :lg="12" :xl="10">
+            <el-form :model="user" label-width="80px">
                 <el-form-item label="手机号">
-                    <el-text class="mx-1">{{ user.phone }}</el-text>
+                    <el-input v-model="user.phone" disabled placeholder="请先登录" />
                 </el-form-item>
                 <el-form-item label="姓名">
                     <el-input v-model="user.userName" placeholder="请输入" />

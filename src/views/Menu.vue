@@ -52,7 +52,9 @@ import { Sunny, Moon } from '@element-plus/icons-vue'
 
 const activeIndex = ref('1')
 
+// 判断当前是否为暗色模式
 const isDark = useDark()
+// 切换暗色模式
 const toggleDark = useToggle(isDark)
 
 // 初始化的时候，根据路由判断当前激活的菜单
@@ -62,7 +64,7 @@ if (route == 'home') {
     activeIndex.value = '1'
 } else if (route == 'course') {
     activeIndex.value = '2'
-} else if (route == 'my') {
+} else if (route =='my') {
     activeIndex.value = '3'
 }
 
@@ -76,6 +78,7 @@ defineProps<{
     user?: any
 }>()
 
+// 退出登录
 const exitLogin = () => {
     localStorage.removeItem('token')
     location.reload()
