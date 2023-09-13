@@ -25,21 +25,27 @@
             </el-menu-item>
         </router-link>
 
-        <div style="margin: 0 10px;">
-            <el-button @click="toggleDark()" :icon="Sunny" circle v-if="!isDark" />
-            <el-button @click="toggleDark()" :icon="Moon" circle v-if="isDark" />
+        <div>
+            <el-button style="margin: 0 20px;" @click="toggleDark()" :icon="Sunny" circle v-if="!isDark" />
+            <el-button style="margin: 0 20px;" @click="toggleDark()" :icon="Moon" circle v-if="isDark" />
         </div>
         <el-col :span="4">
-            <div v-if="!user" style="width: 200px;margin-left: 20px;">
+            <div v-if="Object.keys(user).length == 0" style="width: 300px;margin-left: 20px;">
                 <el-button @click="showLoginModal()">
                     <span class="ml-2">登录</span>
                 </el-button>
             </div>
-            <div v-if="user" style="width: 200px;margin-left: 20px;">
-                <el-text class="mx-1">欢迎您，{{ user.userName }}&nbsp;&nbsp;&nbsp;&nbsp;</el-text>
-                <el-button @click="exitLogin()">
-                    <span class="ml-2">退出登录</span>
-                </el-button>
+            <div v-else style="width: 300px;margin-left: 20px;">
+                <el-row>
+                    <el-col style="align-self:center" :span="16">
+                        <el-text>欢迎您，{{ user.userName }}&nbsp;&nbsp;&nbsp;&nbsp;</el-text>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-button @click="exitLogin()">
+                            <span>退出登录</span>
+                        </el-button>
+                    </el-col>
+                </el-row>
             </div>
         </el-col>
     </el-menu>
@@ -64,14 +70,17 @@ if (route == 'home') {
     activeIndex.value = '1'
 } else if (route == 'course') {
     activeIndex.value = '2'
-} else if (route =='my') {
+} else if (route == 'my') {
     activeIndex.value = '3'
 }
 
 // 显示登录 传父组件
-const emit = defineEmits(['changLoginVisible'])
+const emit = defineEmits(['changLoginVisible', 'refreshingLoginStatus'])
 const showLoginModal = () => {
     emit('changLoginVisible', true)
+}
+const refreshingLoginStatus = () => {
+    emit('refreshingLoginStatus', true)
 }
 
 defineProps<{
@@ -81,7 +90,7 @@ defineProps<{
 // 退出登录
 const exitLogin = () => {
     localStorage.removeItem('token')
-    location.reload()
+    refreshingLoginStatus()
 }
 </script>
 

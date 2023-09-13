@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <Menu @changLoginVisible="changLoginVisible" :user="user" ></Menu>
+    <Menu @changLoginVisible="changLoginVisible" @refreshingLoginStatus="refreshingLoginStatus" :user="user"></Menu>
   </div>
 
   <div class="main">
@@ -23,47 +23,43 @@
 import Menu from '@/views/Menu.vue'
 import Login from '@/components/Login.vue'
 import { ref } from 'vue'
-import axios from 'axios'
-//axios全局配置
-axios.defaults.headers['token'] = window.localStorage.getItem("token")
-
+import service from '@/utils/request'
+// 当前环境
+const env = import.meta.env.MODE
 
 const isLoginVisible = ref(false)
-const user = ref('')
+const user = ref({})
 
 const changLoginVisible = (on_off: boolean) => {
   isLoginVisible.value = on_off
 }
 
+// 刷新登录状态，获取自我信息
 const refreshingLoginStatus = () => {
-  login()
-}
-
-const login = () => {
-  // 判断是否登录
   if (localStorage.getItem('token')) {
-    // 请求用户信息
-    axios({
-      method: 'get',
-      url: import.meta.env.VITE_back_url + '/user'
-    })
-      .then(res => {
-        // 如果状态码为1，则将用户信息赋值给user
-        if (res.data.code === 1) {
-          user.value = res.data.data
-        } else {
-          // 否则将user赋值为空
-          user.value = ''
-        }
-      })
-      .catch(err => {
-        // 打印错误信息
-        console.log("请求错误:" + err)
-      })
+    if (env === 'github') {
+      user.value = {
+        userId: 2,
+        phone: 'test',
+        userName: '测试账号',
+        sex: 0,
+        userTypeId: 1,
+      }
+    } else {
+      service.get('/user')
+        .then(res => {
+          user.value = res.data
+        })
+        .catch(() => {
+          localStorage.removeItem('token')
+        })
+    }
+  } else {
+    user.value = {}
   }
 }
 
-login()
+refreshingLoginStatus()
 </script>
 
 <style scoped>

@@ -84,7 +84,10 @@
 import { reactive } from 'vue'
 import { Delete } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import axios from 'axios'
+import service from '@/utils/request'
+// 当前环境
+const env = import.meta.env.MODE
+
 
 // do not use same name with ref
 const form = reactive<{
@@ -153,27 +156,24 @@ const students = [
 
 // 提交表单
 const submitLesson = () => {
-  axios.post('/lesson', {
-    teachers: form.teachers,
-    students: form.students,
-    subject: form.subject,
-    startDate: form.startDate,
-    startTime: form.startTime,
-    endDate: form.endDate,
-    endTime: form.endTime,
-    online: form.online,
-    description: form.description,
-  })
-    .then(res => {
-      if (res.data.code === 1) {
+  if (env === 'github') {
+    ElMessage.success('添加课程成功(测试功能)')
+  } else {
+    service.post('/lesson', {
+      teachers: form.teachers,
+      students: form.students,
+      subject: form.subject,
+      startDate: form.startDate,
+      startTime: form.startTime,
+      endDate: form.endDate,
+      endTime: form.endTime,
+      online: form.online,
+      description: form.description,
+    })
+      .then(() => {
         ElMessage.success('添加课程成功')
-      } else {
-        ElMessage.warning(res.data.msg)
-      }
-    })
-    .catch(err => {
-      ElMessage.error('连接服务器失败：' + err)
-    })
+      })
+  }
 }
 </script>
 

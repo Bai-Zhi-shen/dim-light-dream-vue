@@ -6,7 +6,7 @@
                     <el-input v-model="user.phone" disabled placeholder="请先登录" />
                 </el-form-item>
                 <el-form-item label="姓名">
-                    <el-input v-model="user.userName" placeholder="请输入" />
+                    <el-input v-model="user.userName" placeholder="请输入" maxlength="5" />
                 </el-form-item>
                 <el-form-item label="性别">
                     <el-radio-group v-model="user.sex">
@@ -31,30 +31,34 @@
 </template>
 
 <script setup lang="ts">
-import axios from 'axios';
 import { ElMessage } from 'element-plus'
-//axios全局配置
-axios.defaults.headers['token'] = window.localStorage.getItem("token")
+import service from '@/utils/request'
+// 当前环境
+const env = import.meta.env.MODE
 
 const props = defineProps<{
     user?: any
 }>()
 
 const submitUser = () => {
-    axios.put(import.meta.env.VITE_back_url + '/user', {
-        userName: props.user.userName,
-        sex: props.user.sex,
-        userTypeId: props.user.userTypeId
-    })
-        .then(res => {
-            if (res.data.code === 1) {
-                ElMessage.success('修改成功')
-            } else {
-                ElMessage.warning(res.data.msg)
-            }
-        })
-        .catch(err => {
-            ElMessage.error('连接服务器失败：' + err)
-        })
+    if (localStorage.getItem('token')) {
+        if (env === 'github') {
+            props.user.userName = props.user.userName
+            props.user.sex = props.user.sex
+            props.user.userTypeId = props.user.userTypeId
+            ElMessage.success('修改成功')
+        } else {
+            service.put('/user', {
+                userName: props.user.userName,
+                sex: props.user.sex,
+                userTypeId: props.user.userTypeId
+            })
+                .then(() => {
+                    ElMessage.success('修改成功')
+                })
+        }
+    } else {
+        ElMessage.warning('请先登录')
+    }
 }
 </script>

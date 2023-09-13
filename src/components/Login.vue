@@ -24,13 +24,13 @@
 
             <el-form :model="registerForm" v-if="isRegisterForm">
                 <el-form-item>
-                    <el-input v-model="registerForm.phone" placeholder="未来登录用的手机号" />
+                    <el-input v-model="registerForm.phone" placeholder="未来登录用的手机号" maxlength="11" />
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="registerForm.password" placeholder="未来登录用的密码" show-password />
+                    <el-input v-model="registerForm.password" placeholder="未来登录用的密码" show-password maxlength="20" />
                 </el-form-item>
                 <el-form-item>
-                    <el-input v-model="registerForm.userName" placeholder="用户名" />
+                    <el-input v-model="registerForm.userName" placeholder="用户名" maxlength="5" />
                 </el-form-item>
 
                 <el-form-item label="性别">
@@ -60,9 +60,10 @@
 <script setup lang="ts">
 import { reactive } from 'vue'
 import { ref } from 'vue'
-import axios from 'axios'
 import { ElMessage } from 'element-plus'
-const back_url = import.meta.env.VITE_back_url
+import service from '@/utils/request'
+// 当前环境
+const env = import.meta.env.MODE
 
 const isRegisterForm = ref(false)
 
@@ -81,44 +82,47 @@ const registerForm = reactive({
 })
 
 const login = () => {
-    axios.post(back_url + '/login', {
-        phone: loginForm.phone,
-        password: loginForm.password
-    })
-        .then(res => {
-            if (res.data.code === 1) {
-                localStorage.setItem("token", res.data.data)
+    if (env === 'github') {
+        if (loginForm.phone === 'test' && loginForm.password === '123456') {
+            localStorage.setItem("token", 'test')
+            ElMessage.success('登录成功')
+            hideLoginModal()
+            refreshingLoginStatus()
+        } else {
+            ElMessage.warning('测试账号: test \n 密码: 123456')
+        }
+    }
+    else {
+        service.post('/login', {
+            phone: loginForm.phone,
+            password: loginForm.password
+        })
+            .then(res => {
+                localStorage.setItem("token", res.data)
                 ElMessage.success('登录成功')
                 hideLoginModal()
                 refreshingLoginStatus()
-            } else {
-                ElMessage.warning(res.data.msg)
-            }
-        })
-        .catch(err => {
-            ElMessage.error('连接服务器失败：' + err)
-        })
+            })
+    }
 }
 
 const register = () => {
-    axios.post(back_url + '/login/register', {
-        phone: registerForm.phone,
-        password: registerForm.password,
-        userName: registerForm.userName,
-        sex: registerForm.sex,
-        userTypeId: registerForm.userTypeId
-    })
-        .then(res => {
-            if (res.data.code === 1) {
+    if (env === 'github') {
+        ElMessage.warning('测试版不能注册')
+    }
+    else {
+        service.post('/login/register', {
+            phone: registerForm.phone,
+            password: registerForm.password,
+            userName: registerForm.userName,
+            sex: registerForm.sex,
+            userTypeId: registerForm.userTypeId
+        })
+            .then(() => {
                 ElMessage.success('注册成功')
                 isRegisterForm.value = !isRegisterForm
-            } else {
-                ElMessage.warning(res.data.msg)
-            }
-        })
-        .catch(err => {
-            ElMessage.error('连接服务器失败：' + err)
-        })
+            })
+    }
 }
 
 // 隐藏登录 传父组件

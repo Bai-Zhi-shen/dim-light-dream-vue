@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "githubDev": "vite --mode github --base /dim-light-dream-vue/",
     "build": "vue-tsc && vite build",
+    "githubBuild": "vue-tsc && vite build --mode github --base /dim-light-dream-vue/",
     "preview": "vite preview"
   },
   "dependencies": {

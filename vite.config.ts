@@ -4,9 +4,6 @@ import { resolve } from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  // 项目部署的基础路径
-  base: "/dim-light-dream-vue/",
-
   // 插件
   plugins: [
     vue()
